@@ -40,9 +40,11 @@ const DefaultTabBar = React.createClass({
   renderTabOption(name, page) {
   },
 
-  renderTab(name, page, isTabActive, onPressHandler) {
+  renderTab(name, page, onPressHandler) {
     const { activeTextColor, inactiveTextColor, textStyle, } = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
+
+    const isTabActive = this.props.activeTab === page;
 
     return <Button
       style={{flex: 1, }}

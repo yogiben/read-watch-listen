@@ -11,27 +11,27 @@ export default class Home extends Component {
       text: '',
     }
   }
-  update(_id, $set) {
+  update(label, $set) {
     const {actions} = this.props;
-    if (_id && $set) {
-      actions.update(_id, $set);
+    if (label && $set) {
+      actions.update(label, $set);
     }
   }
 
-  toggleCheck(_id) {
+  toggleCheck(label) {
     const {actions} = this.props;
     let {items} = this.state;
 
-    const newItem = items.find(i => i._id === _id);
+    const newItem = items.find(i => i.label === label);
     newItem.done = !newItem.done;
 
     items = items.map(i => {
-      return i._id === _id
+      return i.label === label
         ? newItem
         : i;
     });
 
-    actions.update(_id, {done: newItem.done});
+    actions.update(label, {done: newItem.done});
 
     this.setState({items});
   }
@@ -46,7 +46,7 @@ export default class Home extends Component {
 
     const {list} = this.props;
 
-    const doc = {label, list};
+    const doc = {label, list, createdAt: new Date()};
 
     let {items} = this.state;
     items.unshift(doc);
@@ -59,47 +59,88 @@ export default class Home extends Component {
     actions.insert(doc);
   }
 
-  remove(_id) {
+  remove(label) {
     const {actions} = this.props;
     let {items} = this.state;
 
-    items = items.filter(i => i._id !== _id);
-    actions.remove(_id);
+    items = items.filter(i => i.label !== label);
+    actions.remove(label);
 
     this.setState({items});
 
   }
 
+  addFixtures() {
+
+    const {list, actions, items} = this.props;
+
+    if (items.length) {
+      return;
+    }
+
+    const itemLib = {
+      READ: [
+        {label: 'War and peace', done: false},
+        {label: 'The Blockchain Revolution', done: false},
+      ],
+      WATCH: [
+        {label: 'Bojack Horseman', done: false},
+        {label: 'The Lobster', done: false},
+        {label: 'Holy Mountain', done: false},
+      ],
+      LISTEN: [
+        {label: 'Edward Sharpe and the Magnetic Zeros', done: false},
+        {label: 'Bonobo', done: false},
+      ]
+    };
+
+    const fixtures = itemLib[list]
+      .map(i => {return {...i, list};})
+      .forEach(i => actions.insert(i));
+  }
+
   render() {
     const { items } = this.state;
     const {isEditing} = this.props;
-
+    const brand = '#27ae60';
 
     return (
-      <List>
+      <List style={{paddingTop: 5}}>
         <ListItem>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Add something'
-            onSubmitEditing={this.insert.bind(this)}
-            onChangeText={(text) => this.setState({text})}
-            value={this.state.text}
-            ref={c => this.textInput = c}
-          />
+          <View style={{flexDirection: 'row'}}>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Add something'
+              onSubmitEditing={this.insert.bind(this)}
+              onChangeText={(text) => this.setState({text})}
+              value={this.state.text}
+              ref={c => this.textInput = c}
+            />
+          {this.state.text
+          ? (
+            <View style={{width: 40}}>
+              <Button transparent onPress={this.insert.bind(this)}>
+                <Icon name='ios-add-circle' color={brand} style={{marginTop: 3, fontSize: 30}}/>
+              </Button>
+            </View>
+          ) : null}
+        </View>
         </ListItem>
-        {items.map(item => (
-          <ListItem key={item._id} style={{}}>
+        {items
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .map(item => (
+          <ListItem key={item.label} style={{}}>
             <View style={{ flexDirection: 'row' }}>
               <View style={{width: 40}}>
                 {isEditing
                 ? (
-                  <Button transparent onPress={this.remove.bind(this, item._id)}>
+                  <Button transparent onPress={this.remove.bind(this, item.label)}>
                      <Icon name='ios-close-outline' color='red' style={{marginTop: 3, fontSize: 30}}/>
                   </Button>
                 )
                 : (
                   <View style={{paddingTop: 8}}>
-                    <CheckBox checked={item.done} onPress={this.toggleCheck.bind(this, item._id)}/>
+                    <CheckBox checked={item.done} onPress={this.toggleCheck.bind(this, item.label)}/>
                   </View>
                 )}
               </View>
@@ -108,7 +149,7 @@ export default class Home extends Component {
                 underlineColorAndroid='transparent'
                 style={styles.textInput}
                 defaultValue={item.label} key={item.label}
-                onChangeText={(label) => this.update(item._id, {label})}
+                onChangeText={(label) => this.update(item.label, {label})}
               />
           </View>
           </ListItem>

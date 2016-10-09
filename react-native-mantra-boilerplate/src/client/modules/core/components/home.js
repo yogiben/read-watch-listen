@@ -12,7 +12,8 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEditing: false
+      isEditing: false,
+      page: 0
     };
   }
 
@@ -35,14 +36,18 @@ export default class Home extends Component {
 
     const brand = '#27ae60';
 
+    const {page} = this.state;
+
     return (
       <View style={{flex: 1}}>
         <ScrollableTabView
           prerenderingSiblingsNumber={2}
           renderTabBar={(props) => <TabBar {...props} />}
           tabBarActiveTextColor='black'
-          tabBarUnderlineStyle={{backgroundColor: 'white'}}
+          tabBarUnderlineStyle={{backgroundColor: '#eee'}}
           tabBarBackgroundColor={brand}
+          page={page}
+          onChangeTab={({i, ref}) => this.setState({page: i})}
         >
           {['read', 'watch', 'listen'].map(list => (
             <List

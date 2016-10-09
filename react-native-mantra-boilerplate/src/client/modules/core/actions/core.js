@@ -1,11 +1,11 @@
 export default {
   insert({db}, doc) {
-    db.insert({...doc, createdAt: new Date()}, (err, res) => {console.log(err, res);});
+    db.insert(doc, (err, res) => {console.log(err, res);});
   },
-  update({db}, _id, $set) {
-    db.update({_id}, {$set});
+  update({db}, label, $set) {
+    db.update({label}, {$set});
   },
-  remove({db}, _id) {
-    db.remove({_id});
+  remove({db}, label) {
+    db.remove({label});
   }
 };

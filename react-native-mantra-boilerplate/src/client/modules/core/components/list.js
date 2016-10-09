@@ -36,9 +36,12 @@ export default class Home extends Component {
     this.setState({items});
   }
 
-  insert() {
+  insert(label) {
     const {actions} = this.props;
-    const label = this.state.text;
+
+    if (!label) {
+      label = this.state.text;
+    }
 
     if (!label) {
       return;
@@ -70,33 +73,30 @@ export default class Home extends Component {
 
   }
 
+  componentDidMount() {
+    if (this.props.items.length === 0) {
+      this.addFixtures();
+    }
+  }
+
   addFixtures() {
 
-    const {list, actions, items} = this.props;
-
-    if (items.length) {
-      return;
-    }
+    const {list, items} = this.props;
 
     const itemLib = {
       READ: [
-        {label: 'War and peace', done: false},
-        {label: 'The Blockchain Revolution', done: false},
+        'War and peace', 'The Blockchain Revolution',
       ],
       WATCH: [
-        {label: 'Bojack Horseman', done: false},
-        {label: 'The Lobster', done: false},
-        {label: 'Holy Mountain', done: false},
+        'Bojack Horseman','The Lobster', 'Holy Mountain'
       ],
       LISTEN: [
-        {label: 'Edward Sharpe and the Magnetic Zeros', done: false},
-        {label: 'Bonobo', done: false},
+        'Edward Sharpe and the Magnetic Zeros', 'Bonobo',
       ]
     };
 
     const fixtures = itemLib[list]
-      .map(i => {return {...i, list};})
-      .forEach(i => actions.insert(i));
+      .forEach(i => this.insert(i));
   }
 
   render() {

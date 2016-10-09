@@ -1,7 +1,7 @@
 import Meteor, { Accounts, ReactiveDict } from 'react-native-meteor';
 import { Actions } from 'react-native-router-flux';
 import Datastore from 'react-native-local-mongodb';
-const db = new Datastore({ filename: '1', autoload: true });
+const db = new Datastore({ filename: '2', autoload: true });
 
 /*import * as Collections from 'lib/collections';
 

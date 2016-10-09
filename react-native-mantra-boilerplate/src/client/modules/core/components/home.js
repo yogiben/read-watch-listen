@@ -42,7 +42,7 @@ export default class Home extends Component {
       <View style={{flex: 1}}>
         <ScrollableTabView
           prerenderingSiblingsNumber={2}
-          renderTabBar={(props) => <TabBar {...props} />}
+          renderTabBar={(props) => <TabBar {...props} goToPage={(page) => this.setState({page})}/>}
           tabBarActiveTextColor='black'
           tabBarUnderlineStyle={{backgroundColor: '#eee'}}
           tabBarBackgroundColor={brand}
